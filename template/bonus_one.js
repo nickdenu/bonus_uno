@@ -14,17 +14,66 @@
 (function() {
 	// Magic!
 	var x;
-	document.getElementById("searchText").onkeyup=function(){x = myFunction();};
-	var data_array;
-	$.getJSON( "http://www.mattbowytz.com/simple_api.json", function( data_array ) {
-		console.log(stringify(data_array.toString()));
+	var data_array = new Array();
+	var i = 0;
+	var j = 0;
+	var datalist = document.createElement("datalist");
+    datalist.setAttribute("id", "predictive_text");
+    document.getElementById("mainForm").appendChild(datalist);
+
+	$.getJSON( "http://www.mattbowytz.com/simple_api.json?data=all", function( json ){
+		for(j = 0; j < json.data.interests.length ; j++, i++)
+		{
+			var option = document.createElement("option");
+			option.setAttribute("value", json.data.interests[j]);
+			document.getElementById("predictive_text").appendChild(option);
+		}
+		
+		for(j = 0; j < json.data.programming.length ; j++, i++)
+		{
+			var option = document.createElement("option");
+			option.setAttribute("value", json.data.programming[j]);
+			document.getElementById("predictive_text").appendChild(option);
+		}
+		
+	document.getElementById("searchText").onkeyup=function(){predictiveFunction1();};
+	
+	/**************NOTES*************/
+	// I tried a bunch of different ways, as seen below.
+	// I couldn't get them to work so as of now, I won't go straight to google when I click the option
+	// rather I will be going to google as I submit my form.
+	/*$('#mainForm').bind('select',function(){
+		console.log("Hello");
+	});*/
+	
+	/*$("options").click(function(){
+		var clicked_item = caller.id;
+		document.getElementById("mainForm").action = "https://www.google.com/search?q=" + clicked_item.val;
+		console.log(clicked_item.val);
+		console.log("hi");
+		document.forms["mainForm"].submit();
+	});*/
+	
+	//document.querySelector('input[list="predictive_text"]').addEventListener('click',predictiveFunction2);
+	
+	
 });
 	
 })();
 
-function myFunction()
+
+function predictiveFunction1()
 {
-	var x = document.getElementById("searchText");
-	console.log(x.value);
-	return x;
+	var search_bar = document.getElementById("searchText");
+    //document.getElementById("mainForm").action = "https://www.google.com/search?q=" + search_bar.value;
+	//console.log( document.getElementById("mainForm").action);
+	//console.log(search_bar.value);
+}
+
+function predictiveFunction2(clicked_item)
+{
+	click_val = clicked_item.target.value;
+	document.getElementById("mainForm").action = "https://www.google.com/search?q=" + click_val;
+	console.log(click_val);
+	document.forms["mainForm"].submit();
 }
